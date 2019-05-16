@@ -48,7 +48,7 @@ javacomponent(jLabel,[60,435,80,40]);
 
 extract_button = uicontrol("Position",[25 175 110 35]);
 extract_button.String = "Question 3";
-extract_button.Callback = @HW1_Q3;
+extract_button.Callback = @extract;
 
 % Hide GUI code
 jLabel = javaObjectEDT('javax.swing.JLabel',...
@@ -57,14 +57,14 @@ javacomponent(jLabel,[840,435,80,40]);
 
 hide_button = uicontrol("Position",[835 150 110 30]);
 hide_button.String = "Question 3";
-hide_button.Callback = @HW2_Q3;
+hide_button.Callback = @hide;
 
 
 
-%% Assigning img.Name , img.Value , img.Type and showing the image..
+%% Assigning img.Name,Path,Value,Type and showing the image..
     function assign_img(~,~)
         if cimg.String(cimg.Value) == "Choose an image ..."
-            [filename, folder] = uigetfile('*.png;*.jpg;*.tif','Select an Image');
+            [filename, folder]= uigetfile('*.png;*.tif','Select an Image');
             if ~filename
                 return;
             end
@@ -105,7 +105,7 @@ hide_button.Callback = @HW2_Q3;
 %% Initialize default values
 assign_img(cimg);
 %% Extract function
-    function HW1_Q3(~,~)
+    function extract(~,~)
         fig = figure("Name","HW1_Q3 : "+img.Name); % create a new figure
         add_help_button(fig,"About HW1_Q3","Every image pixel contains 8-bit number ; the first image is the first bit for each pixel , and if the image is rgb one then it''s the first bit for the red ,green and blue 8-bit numbers  , then  the second image contains the 2''nd bit incrementally with the first one (contains 1''st & 2''nd) , and each image contains the next bit incrementally.");
         
@@ -140,7 +140,7 @@ assign_img(cimg);
         end
     end
 %% Hide function
-    function HW2_Q3 (~,~)
+    function hide(~,~)
         fig = figure("Name","HW1_Q3 : "+img.Name); % create a new figure
         add_help_button(fig,"About HW1_Q3","Every image pixel contains 8-bit number ; the first image is the first bit for each pixel , and if the image is rgb one then it''s the first bit for the red ,green and blue 8-bit numbers  , then  the second image contains the 2''nd bit incrementally with the first one (contains 1''st & 2''nd) , and each image contains the next bit incrementally.");
         

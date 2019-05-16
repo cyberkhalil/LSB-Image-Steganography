@@ -1,13 +1,16 @@
 function Main()
-%% Settings
 % @copy GPL version 3
+
+%% Settings
 clc;close all;clear;
+
 %% create img cell
 img = {};
-%% gui code
 
+%% gui code
 % Main Figuare GUI
-figure("Name","HomeWork 3","Position",[200 100 950 500],"MenuBar","none","Resize","off");
+figure("Name","HomeWork 3","Position",[200 100 950 500],"MenuBar","none"...
+    ,"Resize","off");
 
 imgs_dir_list = []; % TODO put new images directories here
 imgs_list = ["coloredChips.png","cameraman.tif","Choose an image ..."];
@@ -18,24 +21,43 @@ set(cimg,"Position",[445 455 120 40]);
 set(cimg,"String",imgs_list);
 set(cimg,"Callback",@assign_img);
 
-add_help_button(gcf,"About this software","This is home work set #3 for image processing course in <a href=""https://ucas.edu.ps/"">UCAS</a> made by <a href=""https://github.com/khalil2535"">Mahmoud Khalil</a> for Dr.<a href=""https://sites.google.com/ucas.edu.ps/adahdooh/"">Ahmed Aldahdooh</a>.<br><br> How to use ? <br> Just click on button's , It's straight forward ! (see ""?"" button for each question for more information) <br><br><a href=""https://www.gnu.org/licenses/gpl-3.0.en.html"">License &#169; GPL 3</a> <br> This means you are free to use/edit/sell/change this software while you distribute a copy of the original or your modified code with the software. for more information click on the license above.");
+add_help_button(gcf,"About this software",...
+    "This software made for image processing course in "...
+    +"<a href=""https://ucas.edu.ps/"">UCAS</a> "...
+    +"by <a href=""https://github.com/khalil2535"">Mahmoud Khalil</a> "...
+    +"for Dr.<a href=""https://sites.google.com/ucas.edu.ps/adahdooh"""...
+    +">Ahmed Aldahdooh</a>.<br><br>"...
+    +"How to use this program ? <br>"...
+    +"Just click on button's , It's straight forward !<br><br>"...
+    +"what can this software do ?"...
+    +"<br> It can embeded & extract secret text inside images using LSB"...
+    +" technique. (Least Significant Bit)<br><br>"...
+    +"<a href=""https://www.gnu.org/licenses/gpl-3.0.en.html"">License"...
+    +"&#169; GPL 3</a><br>"...
+    +" This means you are free to use/edit/sell/change this software "...
+    +"while you distribute the copy of the modified version along "...
+    +"with the software.<br>"...
+    +"for more information click on the license above or visit "...
+    +"https://www.gnu.org/licenses/gpl-3.0.en.html.");
 
-% HW1 GUI
-jLabel = javaObjectEDT('javax.swing.JLabel','<html><font color="red" size="6">Extract</html>');
-HW1.Label = javacomponent(jLabel,[60,435,80,40]);
+% Extract GUI code
+jLabel = javaObjectEDT('javax.swing.JLabel',...
+    '<html><font color="green" size="6">Extract</html>');
+javacomponent(jLabel,[60,435,80,40]);
 
 
-HW1.Q3 = uicontrol("Position",[25 175 110 35]);
-HW1.Q3.String = "Question 3";
-HW1.Q3.Callback = @HW1_Q3;
+extract_button = uicontrol("Position",[25 175 110 35]);
+extract_button.String = "Question 3";
+extract_button.Callback = @HW1_Q3;
 
-% HW2 GUI
-jLabel = javaObjectEDT('javax.swing.JLabel','<html><font color="blue" size="6">Hide</html>');
-HW2.Label = javacomponent(jLabel,[840,435,80,40]);
+% Hide GUI code
+jLabel = javaObjectEDT('javax.swing.JLabel',...
+    '<html><font color="red" size="6">Hide</html>');
+javacomponent(jLabel,[840,435,80,40]);
 
-HW2.Q3 = uicontrol("Position",[835 150 110 30]);
-HW2.Q3.String = "Question 3";
-HW2.Q3.Callback = @HW2_Q3;
+hide_button = uicontrol("Position",[835 150 110 30]);
+hide_button.String = "Question 3";
+hide_button.Callback = @HW2_Q3;
 
 
 
@@ -376,4 +398,3 @@ assign_img(cimg);
     end
 
 end
-% TODO : try to make it executable

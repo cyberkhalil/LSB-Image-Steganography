@@ -46,22 +46,29 @@ jLabel = javaObjectEDT('javax.swing.JLabel',...
 javacomponent(jLabel,[60,435,80,40]);
 
 
-extract_button = uicontrol("Position",[25 175 110 35]);
-extract_button.String = "Question 3";
+extract_button = uicontrol("Position",[45 175 110 35]);
+extract_button.String = "Extract Hidden Text";
 extract_button.Callback = @extract;
+
+jTextArea = javaObjectEDT('javax.swing.JTextArea');
+javacomponent(jTextArea,[15,220,200,200]);
 
 % Hide GUI code
 jLabel = javaObjectEDT('javax.swing.JLabel',...
     '<html><font color="red" size="6">Hide</html>');
 javacomponent(jLabel,[840,435,80,40]);
 
-hide_button = uicontrol("Position",[835 150 110 30]);
-hide_button.String = "Question 3";
+hide_button = uicontrol("Position",[805 175 110 35]);
+hide_button.String = "Hide Text";
 hide_button.Callback = @hide;
+
+jTextArea = javaObjectEDT('javax.swing.JTextArea');
+javacomponent(jTextArea,[770,220,175,200]);
 
 %% Assigning img.Name,Path,Value,Type and showing the image..
     function assign_img(~,~)
         if cimg.String(cimg.Value) == "Choose another image ..."
+            % TODO maybe more image formats ?
             [filename, folder]= uigetfile('*.png;*.tif','Select an Image');
             if ~filename
                 return;
@@ -102,7 +109,12 @@ hide_button.Callback = @hide;
         end
         img.Size = img.Width * img.Height;
         imshow(img.Value);
-        jLabel = javaObjectEDT('javax.swing.JLabel',"<html><font color=""#800080"" size=""3"">Info( Size: "+img.Size+", Type: "+img.Type+" , Width: "+img.Width+" , Height: "+img.Height+" )</html>");
+        
+        jLabel = javaObjectEDT('javax.swing.JLabel',...
+            "<html><font color=""#800080"" size=""3"">Info( Size: "...
+            +img.Size+", Type: "+img.Type+" , Width: "+img.Width+...
+            " , Height: "+img.Height+" )</html>");
+        
         javacomponent(jLabel,[350,10,400,40]);
         disp("assign_img done");
     end

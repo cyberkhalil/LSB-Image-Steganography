@@ -10,48 +10,28 @@ img = {};
 figure("Name","HomeWork 3","Position",[200 100 950 500],"MenuBar","none","Resize","off");
 
 imgs_dir_list = []; % TODO put new images directories here
-imgs_list = ["coloredChips.png","autumn.tif","canoe.tif","car1.jpg","car2.jpg","peppers.png","strawberries.jpg","Choose an image ..."];
+imgs_list = ["coloredChips.png","cameraman.tif","Choose an image ..."];
 
 % Pop menu to choose image from
 cimg = uicontrol("Style","popupmenu");
-set(cimg,"Position",[550 455 120 40]);
+set(cimg,"Position",[445 455 120 40]);
 set(cimg,"String",imgs_list);
 set(cimg,"Callback",@assign_img);
 
 add_help_button(gcf,"About this software","This is home work set #3 for image processing course in <a href=""https://ucas.edu.ps/"">UCAS</a> made by <a href=""https://github.com/khalil2535"">Mahmoud Khalil</a> for Dr.<a href=""https://sites.google.com/ucas.edu.ps/adahdooh/"">Ahmed Aldahdooh</a>.<br><br> How to use ? <br> Just click on button's , It's straight forward ! (see ""?"" button for each question for more information) <br><br><a href=""https://www.gnu.org/licenses/gpl-3.0.en.html"">License &#169; GPL 3</a> <br> This means you are free to use/edit/sell/change this software while you distribute a copy of the original or your modified code with the software. for more information click on the license above.");
 
 % HW1 GUI
-jLabel = javaObjectEDT('javax.swing.JLabel','<html><font color="red" size="6">SET #1</html>');
+jLabel = javaObjectEDT('javax.swing.JLabel','<html><font color="red" size="6">Extract</html>');
 HW1.Label = javacomponent(jLabel,[60,435,80,40]);
 
-HW1.Q1 = uicontrol("Position",[25 375 110 35]);
-HW1.Q1.String = "Question 1";
-HW1.Q1.Callback = @HW1_Q1;
-
-HW1.Q2 = uicontrol("Position",[25 275 110 35]);
-HW1.Q2.String = "Question 2";
-HW1.Q2.Callback = @HW1_Q2;
 
 HW1.Q3 = uicontrol("Position",[25 175 110 35]);
 HW1.Q3.String = "Question 3";
 HW1.Q3.Callback = @HW1_Q3;
 
 % HW2 GUI
-jLabel = javaObjectEDT('javax.swing.JLabel','<html><font color="blue" size="6">SET #2</html>');
+jLabel = javaObjectEDT('javax.swing.JLabel','<html><font color="blue" size="6">Hide</html>');
 HW2.Label = javacomponent(jLabel,[840,435,80,40]);
-
-HW2.Q1 = uicontrol("Position",[835 375 110 30]);
-HW2.Q1.String = "Question 1";
-HW2.Q1.Callback = @HW2_Q1;
-
-HW2.Q2.A = uicontrol("Position",[835 300 110 30]);
-HW2.Q2.A.String = "Question 2 (A)";
-HW2.Q2.A.Callback = @HW2_Q2_A;
-
-HW2.Q2.B = uicontrol("Position",[835 225 110 30]);
-HW2.Q2.B.String = "Question 2 (B)";
-HW2.Q2.B.Callback = @HW2_Q2_B;
-
 
 HW2.Q3 = uicontrol("Position",[835 150 110 30]);
 HW2.Q3.String = "Question 3";
@@ -110,15 +90,15 @@ assign_img(cimg);
         
         x = 2; % number of images on x axsis
         y = 3; % number of images on y axsis
-
+        
         g = @(i,s) (floor(i/s)*s) + s/2;
         imshowadjusted = @(image , steps_number) imshow(g(image,steps_number*2));
-
+        
         % show original image
         subplot(x,y,1);
         imshow(img.Value);
         title('Original');
-
+        
         for index=2:6
             subplot(x,y,index);
             imshowadjusted(img.Value,2^index);
@@ -133,12 +113,12 @@ assign_img(cimg);
         
         x = 3; % number of images on x axsis
         y = 3; % number of images on y axsis
-
+        
         % show original image
         subplot(x,y,1);
         imshow(img.Value);
         title('Original');
-
+        
         for i=1:8
             subplot(x,y,i+1);
             imshow(bitget(double(img.Value),i,'uint8'));
@@ -172,8 +152,8 @@ assign_img(cimg);
             f_i_flipped = f_bin_flipped(:,1:i);
             f_i = fliplr(f_i_flipped);
             f_dec = bin2dec(f_i) * ((2^(9-i))-1);
-
-
+            
+            
             f_final = shaping(f_dec);
             
             imshow(uint8(f_final));
@@ -240,29 +220,29 @@ assign_img(cimg);
         title('adapthisteq histogram');
     end
 
-   function HW2_Q2_A(~,~)
-       fig = figure("Name","HW2_Q2_A : "+img.Name); % create a new figure
-       add_help_button(fig,"About HW2_Q2_A","The first 3 images are filtered by the <b>low pass filter</b> which smooth or blur the images by decreasing the disparity between intensities.<br><br> the other 3 is filtered by <b>high pass filter</b> which is known by sharpenning the images returning the high frequency components from the image.");
-       x = 2; % number of images on x axsis
-       y = 3; % number of images on y axsis
-
-       % filters
-       f(:,:,1) = fspecial('average',3); % first low filter
-       f(:,:,2) = 1/10*[1 1 1;1 2 1;1 1 1]; % second low filter
-       f(:,:,3) = 1/16*[2 1 2;1 4 1;2 1 2]; % third low filter
-
-       f(:,:,4) = 1/9*[-1 -1 -1;-1 8 -1; -1 -1 -1]; % first high filter
-       f(:,:,5) = 1/6*fspecial('laplacian',0); % second high filter
-       f(:,:,6) = 1/16*[-1 -2 -1;-2 12 -2;-1 -2 -1]; % third high filter
-       
-       % plotting
-       for i=1:length(f(:,:,:))
-           subplot(x,y,i);
-           g = imfilter(img.Value,f(:,:,i));
-           imshow(g);
-           title(i);
-       end
-   end
+    function HW2_Q2_A(~,~)
+        fig = figure("Name","HW2_Q2_A : "+img.Name); % create a new figure
+        add_help_button(fig,"About HW2_Q2_A","The first 3 images are filtered by the <b>low pass filter</b> which smooth or blur the images by decreasing the disparity between intensities.<br><br> the other 3 is filtered by <b>high pass filter</b> which is known by sharpenning the images returning the high frequency components from the image.");
+        x = 2; % number of images on x axsis
+        y = 3; % number of images on y axsis
+        
+        % filters
+        f(:,:,1) = fspecial('average',3); % first low filter
+        f(:,:,2) = 1/10*[1 1 1;1 2 1;1 1 1]; % second low filter
+        f(:,:,3) = 1/16*[2 1 2;1 4 1;2 1 2]; % third low filter
+        
+        f(:,:,4) = 1/9*[-1 -1 -1;-1 8 -1; -1 -1 -1]; % first high filter
+        f(:,:,5) = 1/6*fspecial('laplacian',0); % second high filter
+        f(:,:,6) = 1/16*[-1 -2 -1;-2 12 -2;-1 -2 -1]; % third high filter
+        
+        % plotting
+        for i=1:length(f(:,:,:))
+            subplot(x,y,i);
+            g = imfilter(img.Value,f(:,:,i));
+            imshow(g);
+            title(i);
+        end
+    end
 
     function HW2_Q2_B(~,~)
         % TODO : try to make scalable labels & buttons..
@@ -285,35 +265,35 @@ assign_img(cimg);
         % will be high_pass_filter
         subplot(x,y,3)
         title('result');
-        imshow(img.Value-g1);        
+        imshow(img.Value-g1);
         
         %% section 2
-        subplot(x,y,y+1)        
+        subplot(x,y,y+1)
         title('original');
         imshow(img.Value);
-
-
+        
+        
         subplot(x,y,y+2)
         title('high_pass_filter');
         high_pass_filter = 1/2*[-1 -1 -1;-1 8 -1;-1 -1 -1];
         g2 = imfilter(img.Value,high_pass_filter);
         imshow(g2);
-
+        
         % will be low_pass_filter
         subplot(x,y,y+3)
         title('result');
         imshow(img.Value-g2);
-
+        
         %% section 3
         subplot(x,y,y+y+1)
         title('low_pass_filter');
         imshow(g1);
-
-
+        
+        
         subplot(x,y,y+y+2)
         title('high_pass_filter');
         imshow(img.Value-g1);
-
+        
         % will be original
         subplot(x,y,y+y+3)
         title('result');
@@ -325,57 +305,57 @@ assign_img(cimg);
         add_help_button(fig,"About HW2_Q3","In this question we noticed that the EDx for both prewitt & sobel filtters returns sharpened image by the <b>x-axis</b> when you see EDx filtered images you will notice that just <b>x-axis</b> edges more will appear. <br><br> same for the EDy , which returns the same but for the <b>y-axis</b> edges , see EDy filtered images. <br><br> so the summation between the two filters will give both <b>x and y-axis</b> edges , when we see <b>G (EDx+EDy)</b> filtered images we noticed that is correct.");
         x = 2; % number of images on x axsis
         y = 4; % number of images on y axsis
-
+        
         % Equations from question text
         GetG = @(Gx ,Gy) sqrt(power(Gx,2)+power(Gy,2));
         GetGx = @(EDx,I) im2double(imfilter(I,EDx));
         GetGy = @(EDy,I) im2double(imfilter(I,EDy));
-
+        
         %% Section a
         EDx = -fspecial('prewitt')'; %[-1 0 1;-1 0 1;-1 0 1];
         EDy = -fspecial('prewitt');  %[-1 -1 -1;0 0 0;1 1 1];
         Gx = GetGx(EDx,img.Value);
         Gy = GetGy(EDy,img.Value);
         G = GetG(Gx,Gy);
-
+        
         subplot(x,y,1);
         imshow(img.Value);
         title('origin');
-
+        
         subplot(x,y,2);
         imshow(Gx);
         title('EDx prewitt filter');
-
+        
         subplot(x,y,3);
         imshow(Gy);
         title('EDy prewitt filter');
-
+        
         subplot(x,y,4);
         imshow(G);
         title('G prewitt filter');
-
+        
         %% Section b
         EDx = -fspecial('sobel')'; %[-1 0 1;-2 0 2;-1 0 1];
         EDy = -fspecial('sobel');  %[-1 -2 -1;0 0 0;1 2 1];
         Gx = GetGx(EDx,img.Value);
         Gy = GetGy(EDy,img.Value);
         G = GetG(Gx,Gy);
-
+        
         subplot(x,y,y+1);
         imshow(img.Value);
         title('origin');
-
+        
         subplot(x,y,y+2);
         imshow(Gx);
         title('EDx sobel filter');
-
+        
         subplot(x,y,y+3);
         imshow(Gy);
         title('EDy sobel filter');
-
+        
         subplot(x,y,y+4);
         imshow(G);
-        title('G sobel filter');        
+        title('G sobel filter');
     end
 
     function add_help_button(fig,title,content)
@@ -392,7 +372,7 @@ assign_img(cimg);
         end
         render_help();
         set(help_box,"Callback",@show_help);
-        fig.SizeChangedFcn = @render_help; 
+        fig.SizeChangedFcn = @render_help;
     end
 
 end

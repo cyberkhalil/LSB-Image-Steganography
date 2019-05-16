@@ -9,7 +9,7 @@ img = {};
 
 %% gui code
 % Main Figuare GUI
-figure("Name","HomeWork 3","Position",[200 100 950 500],"MenuBar","none"...
+figure("Position",[200 100 950 500],"MenuBar","none"...
     ,"Resize","off");
 
 imgs_path_list = ["coloredChips.png","cameraman.tif"]; % TODO put new images directories here
@@ -123,38 +123,15 @@ javacomponent(jTextArea,[770,220,175,200]);
 assign_img(cimg);
 
 %% Extract function
-    function extract(~,~)
-        fig = figure("Name","HW1_Q3 : "+img.Name); % create a new figure
-        add_help_button(fig,"About HW1_Q3","Every image pixel contains 8-bit number ; the first image is the first bit for each pixel , and if the image is rgb one then it''s the first bit for the red ,green and blue 8-bit numbers  , then  the second image contains the 2''nd bit incrementally with the first one (contains 1''st & 2''nd) , and each image contains the next bit incrementally.");
-        
-        x = 2; % number of images on x axsis
-        y = 4; % number of images on y axsis
-        
-        % create @shaping handle
-        if(img.Type=="truecolor") % shaping for colored image
-            r_unit_size = 1:img.Size;
-            g_unit_size = 1+img.Size:2*img.Size;
-            b_unit_size = 1+2*img.Size:3*img.Size;
-            
-            shaping = @(f_dec) reshape([f_dec(r_unit_size),f_dec(g_unit_size),f_dec(b_unit_size)] ,img.Width,img.Height,3);
-        else    % shaping for not colored (gray) image
-            shaping = @(f_dec)reshape(f_dec,img.Width,img.Height);
-        end
-        
+    function extract(head,~)
         f_bin = dec2bin(img.Value);
-        f_bin_flipped = fliplr(f_bin);
-        
-        for i=1:8
-            subplot(x,y,i);
-            f_i_flipped = f_bin_flipped(:,1:i);
-            f_i = fliplr(f_i_flipped);
-            f_dec = bin2dec(f_i) * ((2^(9-i))-1);
-            
-            
-            f_final = shaping(f_dec);
-            
-            imshow(uint8(f_final));
-            title([num2str(i) '-bit']);
+        txt_bin = f_bin(:,8)';
+        txt = binary_to_ascii(txt_bin);
+        try
+            jTextArea = javaObjectEDT('javax.swing.JTextArea',txt);
+            head.Parent.Children(7) = javacomponent(jTextArea,[15,220,200,200]);
+        catch
+            % maybe i missed something here.
         end
     end
 %% Hide function
@@ -208,5 +185,24 @@ assign_img(cimg);
         render_help();
         set(help_box,"Callback",@show_help);
         fig.SizeChangedFcn = @render_help;
+    end
+    function [ascii_txt] = binary_to_ascii(binary_txt)
+        number_of_possible_chars = uint64(length(binary_txt)/8);
+        binary_txt = binary_txt(1:number_of_possible_chars);
+        ascii_txt = char(bin2dec(reshape(binary_txt,[],8)));
+        if ascii_txt(1)==bin2dec('00000010')
+            [~,i]=ismember(bin2dec('00000011'),ascii_txt,'R2012a');
+            if i~=0
+                ascii_txt = ascii_txt(1:i);
+                return;
+            end
+        end
+        ascii_txt = 'There is no Hidden Text in this image!';
+    end
+    function [binary_txt] = ascii_to_binary(ascii_txt)
+        % TODO check this
+        binary_txt(1) = '00000010';
+        binary_txt(2:1+length(ascii_txt)*8) = char(dec2bin(ascii_txt));
+        binary_txt(end) = '00000011';
     end
 end

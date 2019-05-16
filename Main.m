@@ -104,50 +104,7 @@ hide_button.Callback = @HW2_Q3;
 
 %% Initialize default values
 assign_img(cimg);
-
-%% HW1_Q1 code
-    function HW1_Q1(~,~)
-        fig = figure("Name","HW1_Q1 "+img.Name);
-        add_help_button(fig,"About HW1_Q1","In this question i changed the intensity of the image ; In the original image the intensity is from 0 to 255 increasing 1 value for each step , in the next image i changed this increasing rate to be 4 value for each step which means the new intensities are [2,6,..,254] , in the next one the rate increased to 8 at a step and so on ...");
-        
-        x = 2; % number of images on x axsis
-        y = 3; % number of images on y axsis
-        
-        g = @(i,s) (floor(i/s)*s) + s/2;
-        imshowadjusted = @(image , steps_number) imshow(g(image,steps_number*2));
-        
-        % show original image
-        subplot(x,y,1);
-        imshow(img.Value);
-        title('Original');
-        
-        for index=2:6
-            subplot(x,y,index);
-            imshowadjusted(img.Value,2^index);
-            title(['Adjusted with step of ' num2str(2^index)]);
-        end
-    end
-
-%% HW1 Q2 code
-    function HW1_Q2(~,~)
-        fig = figure("Name","HW1_Q2 : "+img.Name);
-        add_help_button(fig,"About HW1_Q2","In this question i used bitget method to get the n''th bit plane which is a set of bits corresponding to a given bit position in each of the binary numbers representing the image.");
-        
-        x = 3; % number of images on x axsis
-        y = 3; % number of images on y axsis
-        
-        % show original image
-        subplot(x,y,1);
-        imshow(img.Value);
-        title('Original');
-        
-        for i=1:8
-            subplot(x,y,i+1);
-            imshow(bitget(double(img.Value),i,'uint8'));
-            title([num2str(i) '-bit plane']);
-        end
-    end
-
+%% Extract function
     function HW1_Q3(~,~)
         fig = figure("Name","HW1_Q3 : "+img.Name); % create a new figure
         add_help_button(fig,"About HW1_Q3","Every image pixel contains 8-bit number ; the first image is the first bit for each pixel , and if the image is rgb one then it''s the first bit for the red ,green and blue 8-bit numbers  , then  the second image contains the 2''nd bit incrementally with the first one (contains 1''st & 2''nd) , and each image contains the next bit incrementally.");
@@ -182,204 +139,42 @@ assign_img(cimg);
             title([num2str(i) '-bit']);
         end
     end
-
-    function HW2_Q1(~,~)
-        fig = figure("Name","HW2_Q1 : "+img.Name); % create a new figure
-        add_help_button(fig,"About HW2_Q1","In this question i used 3 methods which are :<br><b>imadjust</b> increases the contrast of the image by mapping the values of the input intensity image to new values.<br><br><b>histeq</b> performs histogram equalization. It enhances the contrast of images by transforming the values in an intensity image.<br><br><b>adapthisteq</b> performs contrast-limited adaptive histogram equalization.");
-        
-        x = 2; % number of images on x axsis
-        y = 4; % number of images on y axsis
-        
-        %% origin
-        subplot(x,y,1);
-        imshow(img.Value);
-        title('origin');
-        
-        subplot(x,y,1+y);
-        imhist(img.Value);
-        title('origin histogram');
-        
-        
-        %% imadjust
-        subplot(x,y,2);
-        g = imadjust(img.Value, [], [], 0.5); % imadjust : power nthroot
-        imshow(g);
-        title('imadjust');
-        
-        subplot(x,y,2+y);
-        imhist(g);
-        title('imadjust histogram');
-        
-        
-        %% histeq
-        
-        subplot(x,y,3);
-        g = histeq(img.Value);
-        imshow(g);
-        title('histeq');
-        
-        subplot(x,y,3+y);
-        
-        imhist(g);
-        
-        title('histeq histogram');
-        
-        %% adapthisteq
-        
-        subplot(x,y,4);
-        if img.Type =="grayscale"
-            g = adapthisteq(img.Value);
-        else
-            g(:,:,1) = adapthisteq(img.Value(:,:,1));
-            g(:,:,2) = adapthisteq(img.Value(:,:,2));
-            g(:,:,3) = adapthisteq(img.Value(:,:,3));
-        end
-        imshow(g);
-        title('adapthisteq');
-        
-        subplot(x,y,4+y);
-        imhist(g);
-        title('adapthisteq histogram');
-    end
-
-    function HW2_Q2_A(~,~)
-        fig = figure("Name","HW2_Q2_A : "+img.Name); % create a new figure
-        add_help_button(fig,"About HW2_Q2_A","The first 3 images are filtered by the <b>low pass filter</b> which smooth or blur the images by decreasing the disparity between intensities.<br><br> the other 3 is filtered by <b>high pass filter</b> which is known by sharpenning the images returning the high frequency components from the image.");
-        x = 2; % number of images on x axsis
-        y = 3; % number of images on y axsis
-        
-        % filters
-        f(:,:,1) = fspecial('average',3); % first low filter
-        f(:,:,2) = 1/10*[1 1 1;1 2 1;1 1 1]; % second low filter
-        f(:,:,3) = 1/16*[2 1 2;1 4 1;2 1 2]; % third low filter
-        
-        f(:,:,4) = 1/9*[-1 -1 -1;-1 8 -1; -1 -1 -1]; % first high filter
-        f(:,:,5) = 1/6*fspecial('laplacian',0); % second high filter
-        f(:,:,6) = 1/16*[-1 -2 -1;-2 12 -2;-1 -2 -1]; % third high filter
-        
-        % plotting
-        for i=1:length(f(:,:,:))
-            subplot(x,y,i);
-            g = imfilter(img.Value,f(:,:,i));
-            imshow(g);
-            title(i);
-        end
-    end
-
-    function HW2_Q2_B(~,~)
-        % TODO : try to make scalable labels & buttons..
-        fig = figure("Name","HW2_Q2_B : "+img.Name); % create a new figure
-        add_help_button(fig,"About HW2_Q2_B","This question demonstrate that the original image consists of a low-pass-filtered image and a high-pass-filtered image. <br><br> from first three images we demonstrated :<br> high-pass-filtered image = original image - low-pass-filtered image <br><br> from second three images we demonstrated that :<br> low-pass-filtered image = original image - high-pass-filtered image  <br><br> That's also means : <b>original image = low-pass-filtered image + high-pass-filtered image</b>");
-        x = 3;
-        y = 3;
-        
-        %% section 1
-        subplot(x,y,1)
-        title('original');
-        imshow(img.Value);
-        
-        subplot(x,y,2)
-        title('low_pass_filter');
-        low_pass_filter = [1 1 1;1 -7 1;1 1 1];
-        g1 = imfilter(img.Value,low_pass_filter);
-        imshow(g1);
-        
-        % will be high_pass_filter
-        subplot(x,y,3)
-        title('result');
-        imshow(img.Value-g1);
-        
-        %% section 2
-        subplot(x,y,y+1)
-        title('original');
-        imshow(img.Value);
-        
-        
-        subplot(x,y,y+2)
-        title('high_pass_filter');
-        high_pass_filter = 1/2*[-1 -1 -1;-1 8 -1;-1 -1 -1];
-        g2 = imfilter(img.Value,high_pass_filter);
-        imshow(g2);
-        
-        % will be low_pass_filter
-        subplot(x,y,y+3)
-        title('result');
-        imshow(img.Value-g2);
-        
-        %% section 3
-        subplot(x,y,y+y+1)
-        title('low_pass_filter');
-        imshow(g1);
-        
-        
-        subplot(x,y,y+y+2)
-        title('high_pass_filter');
-        imshow(img.Value-g1);
-        
-        % will be original
-        subplot(x,y,y+y+3)
-        title('result');
-        imshow(img.Value);
-    end
-
+%% Hide function
     function HW2_Q3 (~,~)
-        fig = figure("Name","HW2_Q3 : "+img.Name); % create a new figure
-        add_help_button(fig,"About HW2_Q3","In this question we noticed that the EDx for both prewitt & sobel filtters returns sharpened image by the <b>x-axis</b> when you see EDx filtered images you will notice that just <b>x-axis</b> edges more will appear. <br><br> same for the EDy , which returns the same but for the <b>y-axis</b> edges , see EDy filtered images. <br><br> so the summation between the two filters will give both <b>x and y-axis</b> edges , when we see <b>G (EDx+EDy)</b> filtered images we noticed that is correct.");
+        fig = figure("Name","HW1_Q3 : "+img.Name); % create a new figure
+        add_help_button(fig,"About HW1_Q3","Every image pixel contains 8-bit number ; the first image is the first bit for each pixel , and if the image is rgb one then it''s the first bit for the red ,green and blue 8-bit numbers  , then  the second image contains the 2''nd bit incrementally with the first one (contains 1''st & 2''nd) , and each image contains the next bit incrementally.");
+        
         x = 2; % number of images on x axsis
         y = 4; % number of images on y axsis
         
-        % Equations from question text
-        GetG = @(Gx ,Gy) sqrt(power(Gx,2)+power(Gy,2));
-        GetGx = @(EDx,I) im2double(imfilter(I,EDx));
-        GetGy = @(EDy,I) im2double(imfilter(I,EDy));
+        % create @shaping handle
+        if(img.Type=="truecolor") % shaping for colored image
+            r_unit_size = 1:img.Size;
+            g_unit_size = 1+img.Size:2*img.Size;
+            b_unit_size = 1+2*img.Size:3*img.Size;
+            
+            shaping = @(f_dec) reshape([f_dec(r_unit_size),f_dec(g_unit_size),f_dec(b_unit_size)] ,img.Width,img.Height,3);
+        else    % shaping for not colored (gray) image
+            shaping = @(f_dec)reshape(f_dec,img.Width,img.Height);
+        end
         
-        %% Section a
-        EDx = -fspecial('prewitt')'; %[-1 0 1;-1 0 1;-1 0 1];
-        EDy = -fspecial('prewitt');  %[-1 -1 -1;0 0 0;1 1 1];
-        Gx = GetGx(EDx,img.Value);
-        Gy = GetGy(EDy,img.Value);
-        G = GetG(Gx,Gy);
+        f_bin = dec2bin(img.Value);
+        f_bin_flipped = fliplr(f_bin);
         
-        subplot(x,y,1);
-        imshow(img.Value);
-        title('origin');
-        
-        subplot(x,y,2);
-        imshow(Gx);
-        title('EDx prewitt filter');
-        
-        subplot(x,y,3);
-        imshow(Gy);
-        title('EDy prewitt filter');
-        
-        subplot(x,y,4);
-        imshow(G);
-        title('G prewitt filter');
-        
-        %% Section b
-        EDx = -fspecial('sobel')'; %[-1 0 1;-2 0 2;-1 0 1];
-        EDy = -fspecial('sobel');  %[-1 -2 -1;0 0 0;1 2 1];
-        Gx = GetGx(EDx,img.Value);
-        Gy = GetGy(EDy,img.Value);
-        G = GetG(Gx,Gy);
-        
-        subplot(x,y,y+1);
-        imshow(img.Value);
-        title('origin');
-        
-        subplot(x,y,y+2);
-        imshow(Gx);
-        title('EDx sobel filter');
-        
-        subplot(x,y,y+3);
-        imshow(Gy);
-        title('EDy sobel filter');
-        
-        subplot(x,y,y+4);
-        imshow(G);
-        title('G sobel filter');
+        for i=1:8
+            subplot(x,y,i);
+            f_i_flipped = f_bin_flipped(:,1:i);
+            f_i = fliplr(f_i_flipped);
+            f_dec = bin2dec(f_i) * ((2^(9-i))-1);
+            
+            
+            f_final = shaping(f_dec);
+            
+            imshow(uint8(f_final));
+            title([num2str(i) '-bit']);
+        end
     end
-
+%% Utils
     function add_help_button(fig,title,content)
         help_box = uicontrol("String","?");
         function render_help(~,~)
@@ -396,5 +191,4 @@ assign_img(cimg);
         set(help_box,"Callback",@show_help);
         fig.SizeChangedFcn = @render_help;
     end
-
 end

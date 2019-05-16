@@ -12,8 +12,8 @@ img = {};
 figure("Name","HomeWork 3","Position",[200 100 950 500],"MenuBar","none"...
     ,"Resize","off");
 
-imgs_dir_list = []; % TODO put new images directories here
-imgs_list = ["coloredChips.png","cameraman.tif","Choose an image ..."];
+imgs_path_list = ["coloredChips.png","cameraman.tif"]; % TODO put new images directories here
+imgs_list = ["coloredChips.png","cameraman.tif","Choose another image ..."];
 
 % Pop menu to choose image from
 cimg = uicontrol("Style","popupmenu");
@@ -59,35 +59,40 @@ hide_button = uicontrol("Position",[835 150 110 30]);
 hide_button.String = "Question 3";
 hide_button.Callback = @hide;
 
-
-
 %% Assigning img.Name,Path,Value,Type and showing the image..
     function assign_img(~,~)
-        if cimg.String(cimg.Value) == "Choose an image ..."
+        if cimg.String(cimg.Value) == "Choose another image ..."
             [filename, folder]= uigetfile('*.png;*.tif','Select an Image');
             if ~filename
                 return;
             end
-            img.Name = [folder filename];
+            img.Name = filename;
+            img.Path = [folder filename];
+            imgs_list(end) = filename;
+            imgs_list(end+1) = "Choose another image ...";
+            imgs_path_list(end+1) = img.Path;
+            cimg.String = imgs_list;
         else
             img.Name = cell2mat(cimg.String(cimg.Value));
+            [~,img_index]= ismember(img.Name,imgs_list,'R2012a');
+            img.Path = char(imgs_path_list(img_index));
         end
         
         disp("processing assign_img ..");
         % get image values
-        img_info = imfinfo(img.Name);
+        img_info = imfinfo(img.Path);
         img.Type = img_info.ColorType;
         
         if img.Type == "grayscale"
-            img.Value = imread(img.Name);
+            img.Value = imread(img.Path);
             [img.Width,img.Height]= size(img.Value);
             imshow(img.Value);
         else
             if img.Type == "truecolor"
-                img.Value = imread(img.Name);
+                img.Value = imread(img.Path);
             else
                 % changing indexed to rgb
-                [indexed_value,indexed_map] = imread(img.Name);
+                [indexed_value,indexed_map] = imread(img.Path);
                 img.Value = im2uint8(ind2rgb(indexed_value,indexed_map));
             end
             
@@ -104,6 +109,7 @@ hide_button.Callback = @hide;
 
 %% Initialize default values
 assign_img(cimg);
+
 %% Extract function
     function extract(~,~)
         fig = figure("Name","HW1_Q3 : "+img.Name); % create a new figure

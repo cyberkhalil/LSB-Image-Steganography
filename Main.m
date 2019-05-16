@@ -1,5 +1,5 @@
 function Main()
-% @copy GPL version 3
+% ©copy GPL version 3
 
 %% Settings
 clc;close all;clear;
@@ -202,11 +202,11 @@ assign_img(cimg);
         fig.SizeChangedFcn = @render_help;
     end
     function [ascii_txt] = binary_to_ascii(binary_txt)
-        number_of_possible_chars = uint64(length(binary_txt)/8);
-        binary_txt = binary_txt(1:number_of_possible_chars*8);
-        ascii_txt = char(bin2dec(reshape(binary_txt',8,[])'));
-        if ascii_txt(1)==char(bin2dec('00000010'))
-            [~,i]=ismember(char(bin2dec('00000011')),ascii_txt,'R2012a');
+        number_of_possible_chars = floor(length(binary_txt)/16);
+        binary_txt = binary_txt(1:number_of_possible_chars*16);
+        ascii_txt = char(bin2dec(reshape(binary_txt',16,[])'));
+        if ascii_txt(1)==char(bin2dec('0000000000000010'))
+            [~,i]=ismember(char(bin2dec('0000000000000011')),ascii_txt,'R2012a');
             if i~=0
                 ascii_txt = ascii_txt(2:i-1)';
                 return;
@@ -215,10 +215,10 @@ assign_img(cimg);
         ascii_txt = 'There is no Hidden Text in this image!';
     end
     function [binary_txt] = ascii_to_binary(ascii_txt)
-        binary_txt = '00000010';
-        ascii_txt(end+1) = '©';
+        binary_txt = '0000000000000010';
+        ascii_txt(end+1) = char(bin2dec('1111111111111111'));
         binary_txt(2:1+length(ascii_txt),:) = char(dec2bin(ascii_txt));
-        binary_txt(end,:) = '00000011';
+        binary_txt(end,:) = '0000000000000011';
         binary_txt = reshape(binary_txt(:,:)',1,[]);
     end
 end

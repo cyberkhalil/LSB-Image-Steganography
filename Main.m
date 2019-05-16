@@ -74,7 +74,8 @@ hide_lbl = javacomponent(jLabel,[770,120,175,50]);
     function assign_img(~,~)
         if cimg.String(cimg.Value) == "Choose another image ..."
             % TODO maybe more image formats ?
-            [filename, folder]= uigetfile('*.png;*.tif','Select an Image');
+            [filename, folder]= uigetfile('*.png;*.tif;*.jpg;*.jpeg',...
+                'Select an Image');
             if ~filename
                 return;
             end
@@ -129,6 +130,7 @@ assign_img(cimg);
 
 %% Extract function
     function extract(~,~)
+        extract_lbl.setText('Extracting Text ...');% TODO html
         f_bin = dec2bin(img.Value);
         txt_bin = f_bin(:,8)';
         clear f_bin;
@@ -188,8 +190,11 @@ assign_img(cimg);
         end
         function show_help(~,~)
             help_fig = figure("resize","off","position",[200,200,600,300]);
-            help_label = javaObjectEDT('javax.swing.JLabel','<html><font size="5">&nbsp;&nbsp;&nbsp;&nbsp;'+title+'<br><hr><br>&nbsp;'+content+'</html>');
-            javacomponent(help_label,[10,10,help_fig.Position(3)-10,help_fig.Position(4)-20]);
+            help_label = javaObjectEDT('javax.swing.JLabel',...
+                '<html><font size="5">&nbsp;&nbsp;&nbsp;&nbsp;'...
+                +title+'<br><hr><br>&nbsp;'+content+'</html>');
+            javacomponent(help_label,...
+                [10,10,help_fig.Position(3)-10,help_fig.Position(4)-20]);
             help_label.setVerticalAlignment(1);
         end
         render_help();
@@ -211,9 +216,9 @@ assign_img(cimg);
     end
     function [binary_txt] = ascii_to_binary(ascii_txt)
         binary_txt = '00000010';
-        binary_txt(2:1+length(ascii_txt),:) = '0';
-        binary_txt(2:1+length(ascii_txt),2:8) = char(dec2bin(ascii_txt));
-        binary_txt(end+1,:) = '00000011';
+        ascii_txt(end+1) = '©';
+        binary_txt(2:1+length(ascii_txt),:) = char(dec2bin(ascii_txt));
+        binary_txt(end,:) = '00000011';
         binary_txt = reshape(binary_txt(:,:)',1,[]);
     end
 end

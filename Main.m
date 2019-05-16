@@ -131,6 +131,7 @@ assign_img(cimg);
     function extract(~,~)
         f_bin = dec2bin(img.Value);
         txt_bin = f_bin(:,8)';
+        clear f_bin;
         txt = binary_to_ascii(txt_bin);
         if txt~="There is no Hidden Text in this image!"
             extract_txta.setText(txt);
@@ -170,6 +171,7 @@ assign_img(cimg);
         f_bin(1:length(binary_txt),8)=binary_txt;
         clear binary_txt txt;
         f_dec = bin2dec(f_bin);
+        clear f_bin;
         f_final = uint8(shaping(f_dec));
         imshow(f_final);
         hide_lbl.setText('Writing image ..');
@@ -196,23 +198,22 @@ assign_img(cimg);
     end
     function [ascii_txt] = binary_to_ascii(binary_txt)
         number_of_possible_chars = uint64(length(binary_txt)/8);
-        binary_txt = binary_txt(1:number_of_possible_chars);
-        ascii_txt = char(bin2dec(reshape(binary_txt,[],8)));
-        if ascii_txt(1)==bin2dec('00000010')
-            [~,i]=ismember(bin2dec('00000011'),ascii_txt,'R2012a');
+        binary_txt = binary_txt(1:number_of_possible_chars*8);
+        ascii_txt = char(bin2dec(reshape(binary_txt',8,[])'));
+        if ascii_txt(1)==char(bin2dec('00000010'))
+            [~,i]=ismember(char(bin2dec('00000011')),ascii_txt,'R2012a');
             if i~=0
-                ascii_txt = ascii_txt(2:i-1);
+                ascii_txt = ascii_txt(2:i-1)';
                 return;
             end
         end
         ascii_txt = 'There is no Hidden Text in this image!';
     end
     function [binary_txt] = ascii_to_binary(ascii_txt)
-        % TODO check this
         binary_txt = '00000010';
         binary_txt(2:1+length(ascii_txt),:) = '0';
         binary_txt(2:1+length(ascii_txt),2:8) = char(dec2bin(ascii_txt));
         binary_txt(end+1,:) = '00000011';
-        binary_txt = reshape(binary_txt,1,[]);
+        binary_txt = reshape(binary_txt(:,:)',1,[]);
     end
 end
